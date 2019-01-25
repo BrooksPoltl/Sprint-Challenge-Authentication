@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-
+const env = require('dotenv').config()
 const jwtKey =
   process.env.JWT_SECRET ||
   'add a .env file to root of project with the JWT_SECRET variable';
@@ -7,6 +7,7 @@ const jwtKey =
 // quickly see what this file exports
 module.exports = {
   authenticate,
+  generateToken
 };
 
 // implementation details
@@ -26,4 +27,15 @@ function authenticate(req, res, next) {
       error: 'No token provided, must be set on the Authorization Header',
     });
   }
+}
+function generateToken(user){
+  const payload = {
+    username: user.username,
+    password: user.password
+  }
+  const secret = jwtKey
+  const options = {
+    expiresIn: '30m',
+  }
+  return jwt.sign(payload,secret,options)
 }
